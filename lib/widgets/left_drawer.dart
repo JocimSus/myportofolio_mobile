@@ -1,7 +1,9 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:portfolio_mobile/screens/menu.dart';
 import 'package:portfolio_mobile/screens/experience_form.dart';
+import 'package:portfolio_mobile/screens/experience_list.dart';
 import 'package:portfolio_mobile/screens/project_form.dart';
+import 'package:portfolio_mobile/screens/project_list.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -51,6 +53,19 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.folder_outlined),
+            title: const Text('Project List'),
+            // Navigasi ke halaman daftar proyek
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProjectListPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.add_circle_outline),
             title: const Text('Add Project'),
             // Navigasi ke halaman tambah proyek
@@ -59,6 +74,19 @@ class LeftDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const ProjectFormPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.work_outline),
+            title: const Text('Experience List'),
+            // Navigasi ke halaman daftar pengalaman
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ExperienceListPage(),
                 ),
               );
             },

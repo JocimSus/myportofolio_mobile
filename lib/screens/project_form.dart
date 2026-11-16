@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:portfolio_mobile/models/project.dart';
 import 'package:portfolio_mobile/widgets/left_drawer.dart';
 
 class ProjectFormPage extends StatefulWidget {
@@ -164,6 +165,15 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        // Simpan proyek ke daftar di memori agar tampil
+                        // pada halaman Project List.
+                        Project.items.add(Project(
+                          name: _projectName,
+                          description: _description,
+                          category: _category,
+                          technologies: _technologies,
+                          link: _projectLink,
+                        ));
                         showDialog(
                           context: context,
                           builder: (context) {

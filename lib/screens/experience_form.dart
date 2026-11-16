@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:portfolio_mobile/models/experience.dart';
 import 'package:portfolio_mobile/widgets/left_drawer.dart';
 
 class ExperienceFormPage extends StatefulWidget {
@@ -45,11 +46,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
     super.dispose();
   }
 
-  String _formatDate(DateTime date) {
-    final String month = date.month.toString().padLeft(2, '0');
-    final String day = date.day.toString().padLeft(2, '0');
-    return "${date.year}-$month-$day";
-  }
+  String _formatDate(DateTime date) => Experience.formatDate(date);
 
   Future<void> _pickDate({required bool isStartDate}) async {
     final DateTime now = DateTime.now();
@@ -301,6 +298,16 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        // Simpan pengalaman ke daftar di memori agar tampil
+                        // pada halaman Experience List.
+                        Experience.items.add(Experience(
+                          title: _title,
+                          description: _description,
+                          category: _category,
+                          thumbnailUrl: _thumbnailUrl.trim(),
+                          startDate: _startDate!,
+                          endDate: _isOngoing ? null : _endDate,
+                        ));
                         showDialog(
                           context: context,
                           builder: (context) {

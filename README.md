@@ -11,12 +11,29 @@ struktur dasar widget).
 Aplikasi ini menampilkan halaman utama portofolio berisi:
 
 - 3 `InfoCard` (NPM, Name, Class) yang menampilkan identitas pemilik portofolio.
-- 3 `ItemCard` (Lihat Proyek, Tambah Proyek, Logout) sebagai tombol aksi dengan
-  warna latar berbeda-beda dan `SnackBar` interaktif saat ditekan.
+- 4 `ItemCard` (Lihat Proyek, Tambah Proyek, Tambah Pengalaman, Logout) sebagai
+  tombol aksi dengan warna latar berbeda-beda dan `SnackBar` interaktif saat
+  ditekan. Kartu **Tambah Proyek** dan **Tambah Pengalaman** membuka halaman
+  formulir masing-masing lewat `Navigator.push()`.
+- Drawer kiri (`LeftDrawer`) dengan opsi **Home**, **Add Project**, dan
+  **Add Experience** yang dipakai bersama oleh halaman utama dan kedua halaman
+  formulir.
+
+Halaman formulir:
+
+- **Add Project Form** (`lib/screens/project_form.dart`, Tutorial 09): nama,
+  deskripsi, kategori, teknologi, dan tautan proyek dengan validasi dasar.
+- **Add Experience Form** (`lib/screens/experience_form.dart`, Tugas 8):
+  meniru model `Experience` pada portofolio web (judul, deskripsi, kategori,
+  thumbnail URL, tanggal mulai/selesai) dengan `showDatePicker()`, validasi
+  format URL, validasi urutan tanggal, serta saklar bonus "Sedang berlangsung"
+  yang menonaktifkan tanggal selesai. Setelah validasi lolos, ringkasan isian
+  ditampilkan dalam `AlertDialog`.
 
 Struktur kode memisahkan `main.dart` (bootstrap aplikasi, `MyApp`) dari
-`menu.dart` (halaman utama `MyHomePage` beserta widget `InfoCard` dan
-`ItemCard`), sesuai dengan materi Tutorial 08.
+`lib/screens/` (halaman `MyHomePage`, `ProjectFormPage`, `ExperienceFormPage`)
+dan `lib/widgets/` (`LeftDrawer`, `ItemCard`), sesuai dengan materi Tutorial
+08–09.
 
 ## Setup Proyek
 
@@ -53,3 +70,23 @@ Pada Individual Assignment 7, AI agent ini digunakan untuk:
 Bagian yang tetap dikerjakan manual: isi data `InfoCard` (NPM, nama, kelas) sudah memuat data asli dan diverifikasi ulang agar sesuai data pemilik portofolio, bukan data contoh Burhan. Jawaban pertanyaan reflektif ditulis berdasarkan pemahaman sendiri terhadap konsep Flutter, dengan AI membantu menyusun kalimat agar lebih terstruktur.
 
 Keterbatasan AI: AI tidak menjalankan aplikasi secara visual di emulator/device asli, sehingga verifikasi tampilan (misalnya kontras warna tombol) tetap perlu dicek langsung saat `flutter run`.
+
+### Tugas 8
+
+1. `Navigator.push()` menumpuk route baru di atas route yang sedang aktif, sehingga halaman sebelumnya tetap ada di stack dan pengguna bisa kembali dengan tombol back. `Navigator.pushReplacement()` mengganti route yang sedang aktif dengan route baru, sehingga halaman lama dihapus dari stack dan tidak bisa dikembalikan dengan tombol back. `Navigator.pop()` mengeluarkan route teratas dari stack dan mengembalikan pengguna ke halaman di bawahnya. Pada proyek ini, kartu aksi "Tambah Pengalaman" (dan "Tambah Proyek") membuka formulir dengan `Navigator.push()` agar pengguna masih bisa kembali ke halaman utama lewat tombol back perangkat. Opsi **Home** di drawer memanggil `Navigator.pushReplacement()` menuju `MyHomePage`, sehingga halaman formulir yang sedang terbuka digantikan oleh halaman utama dan stack tidak menumpuk halaman formulir bekas.
+2. `Scaffold` memberi kerangka halaman yang sama di semua layar (AppBar di atas, drawer di kiri, body di tengah), sehingga setiap halaman baru otomatis punya struktur yang seragam. `AppBar` menampilkan judul dan tombol hamburger di posisi yang konsisten, sementara `Drawer` yang sama (`LeftDrawer`) dipasang di halaman utama, formulir proyek, dan formulir pengalaman sehingga navigasi selalu tersedia dari mana pun. Contoh penggunaan warna tema di lebih dari satu halaman: warna indigo (seed `ColorScheme.fromSeed(seedColor: Colors.indigo)`) dipakai pada `AppBar` halaman utama (`Theme.of(context).colorScheme.primary`), `AppBar` kedua halaman formulir, header `DrawerHeader`, dan tombol **Save**; warna sekunder amber dipakai pada saklar "Sedang berlangsung".
+3. Formulir disusun sebagai `Column` di dalam `SingleChildScrollView` dengan setiap input dibungkus `Padding`. `Column` membuat input tersusun vertikal berurutan seperti formulir pada umumnya, `Padding` dan `SizedBox` berperan sebagai widget pengatur jarak agar antar-input ada ruang napas dan label tidak saling menempel. `SingleChildScrollView` berperan sebagai widget penggulir: ketika ruang layar terbatas (layar sempit atau papan ketik muncul dan memakan setengah layar), konten yang tidak muat bisa digulir sehingga semua input dan tombol **Save** tetap dapat dijangkau, alih-alih terpotong atau menyebabkan overflow error.
+4. `GlobalKey<FormState>` adalah kunci yang menghubungkan widget `Form` dengan state-nya, sehingga dari luar (misalnya tombol **Save**) kita bisa mengakses `_formKey.currentState` untuk memvalidasi atau mereset seluruh formulir. `validator` adalah fungsi per-field yang menerima nilai input dan mengembalikan pesan kesalahan (atau `null` jika valid). `validate()` menjalankan semua `validator` sekaligus saat tombol **Save** ditekan; jika ada yang mengembalikan pesan, pesan itu ditampilkan di bawah field terkait dan `validate()` mengembalikan `false` sehingga dialog ringkasan tidak dimunculkan. Contoh nilai yang ditolak: judul pengalaman berisi `"   "` (hanya spasi) ditolak oleh `value.trim().isEmpty`, dan tanggal selesai yang lebih awal dari tanggal mulai ditolak oleh pemeriksaan `isBefore`. Memilih jenis input atau papan ketik saja (misalnya `keyboardType: TextInputType.url`) belum cukup karena papan ketik hanya menyarankan tata letak tombol, tidak memaksa isi yang benar — pengguna tetap bisa mengetik teks sembarang, mengosongkan field wajib, atau menempel nilai yang salah, sehingga pemeriksaan di `validator` tetap diperlukan.
+
+#### AI Disclosure
+
+Tools yang digunakan: Claude Code (Fable 5).
+Pada Individual Assignment 8, AI agent ini digunakan untuk:
+
+- Membaca ketentuan tugas dari berkas PDF soal dan mengekstraknya menjadi checklist implementasi, lalu memetakan field formulir baru terhadap model `Experience` yang sudah ada di portofolio web Django (judul, deskripsi, kategori, thumbnail URL, tanggal mulai/selesai) agar konsisten antar-platform.
+- Menulis kerangka `ExperienceFormPage` mengikuti konvensi `ProjectFormPage` dari Tutorial 09 (struktur `Form` + `GlobalKey<FormState>`, `Padding`, `OutlineInputBorder`), termasuk logika `showDatePicker()`, validasi URL dengan `Uri.tryParse`, validasi urutan tanggal, dan saklar bonus "Sedang berlangsung".
+- Menambahkan kartu aksi dan opsi drawer baru mengikuti pola navigasi yang sudah ada, serta menjalankan `flutter analyze` sampai bersih tanpa temuan.
+
+Bagian yang tetap dikerjakan manual: pemilihan bagian portofolio (Pengalaman) dan fitur bonus diputuskan sendiri dari opsi yang dibahas bersama AI; pengujian alur di Chrome (buka formulir dari kartu dan drawer, submit input valid/tidak valid, navigasi Home) dilakukan langsung. Jawaban reflektif ditinjau dan disesuaikan dengan pemahaman sendiri sebelum dikumpulkan.
+
+Keterbatasan AI: AI memverifikasi lewat `flutter analyze` yang hanya menangkap kesalahan statis, bukan perilaku runtime — misalnya posisi dialog, perilaku date picker, dan keterjangkauan tombol **Save** saat papan ketik tampil tetap harus dicek manual dengan `flutter run` di Chrome dan di layar selebar ponsel.

@@ -4,6 +4,9 @@ import 'package:portfolio_mobile/screens/experience_form.dart';
 import 'package:portfolio_mobile/screens/experience_list.dart';
 import 'package:portfolio_mobile/screens/project_form.dart';
 import 'package:portfolio_mobile/screens/project_list.dart';
+import 'package:portfolio_mobile/services/auth_state.dart';
+import 'package:portfolio_mobile/widgets/auth_guard.dart';
+import 'package:provider/provider.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
@@ -18,8 +21,7 @@ class ItemCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         // Area responsif terhadap sentuhan
-        onTap: () {
-          // Memunculkan SnackBar ketika diklik
+        onTap: () async {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -28,35 +30,42 @@ class ItemCard extends StatelessWidget {
               ),
             );
 
-          // Navigate ke halaman yang sesuai
           if (item.name == "Lihat Proyek") {
-            Navigator.push(
+            await Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ProjectListPage(),
-              ),
+              MaterialPageRoute(builder: (_) => const ProjectListPage()),
             );
           } else if (item.name == "Tambah Proyek") {
-            Navigator.push(
+            final authorized = await ensureLoggedIn(context);
+            if (!authorized || !context.mounted) return;
+            await Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ProjectFormPage(),
-              ),
+              MaterialPageRoute(builder: (_) => const ProjectFormPage()),
             );
           } else if (item.name == "Lihat Pengalaman") {
-            Navigator.push(
+            await Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ExperienceListPage(),
-              ),
+              MaterialPageRoute(builder: (_) => const ExperienceListPage()),
             );
           } else if (item.name == "Tambah Pengalaman") {
-            Navigator.push(
+            final authorized = await ensureLoggedIn(context);
+            if (!authorized || !context.mounted) return;
+            await Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ExperienceFormPage(),
-              ),
+              MaterialPageRoute(builder: (_) => const ExperienceFormPage()),
             );
+          } else if (item.name == "Logout") {
+            if (!context.read<AuthState>().isLoggedIn) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Anda belum login.')),
+              );
+              return;
+            }
+            await context.read<AuthState>().logout();
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('Anda telah logout.')));
           }
         },
         child: Container(
@@ -65,11 +74,7 @@ class ItemCard extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  item.icon,
-                  color: Colors.white,
-                  size: 30.0,
-                ),
+                Icon(item.icon, color: Colors.white, size: 30.0),
                 const Padding(padding: EdgeInsets.all(3)),
                 Text(
                   item.name,

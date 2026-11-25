@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:portfolio_mobile/models/experience.dart';
 import 'package:portfolio_mobile/widgets/left_drawer.dart';
 
@@ -87,11 +87,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text(
-            'Add Experience Form',
-          ),
-        ),
+        title: const Center(child: Text('Add Experience Form')),
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
@@ -166,10 +162,12 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                   ),
                   initialValue: _category,
                   items: _categories
-                      .map((category) => DropdownMenuItem(
-                            value: category,
-                            child: Text(category),
-                          ))
+                      .map(
+                        (category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(category),
+                        ),
+                      )
                       .toList(),
                   onChanged: (String? newValue) {
                     setState(() {
@@ -200,7 +198,8 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                       return null; // opsional, boleh kosong
                     }
                     final Uri? uri = Uri.tryParse(value.trim());
-                    final bool isValidUrl = uri != null &&
+                    final bool isValidUrl =
+                        uri != null &&
                         (uri.isScheme('http') || uri.isScheme('https')) &&
                         uri.host.isNotEmpty;
                     if (!isValidUrl) {
@@ -300,24 +299,26 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                       if (_formKey.currentState!.validate()) {
                         // Simpan pengalaman ke daftar di memori agar tampil
                         // pada halaman Experience List.
-                        Experience.items.add(Experience(
-                          title: _title,
-                          description: _description,
-                          category: _category,
-                          thumbnailUrl: _thumbnailUrl.trim(),
-                          startDate: _startDate!,
-                          endDate: _isOngoing ? null : _endDate,
-                        ));
+                        Experience.items.add(
+                          Experience(
+                            title: _title,
+                            description: _description,
+                            category: _category,
+                            thumbnailUrl: _thumbnailUrl.trim(),
+                            startDate: _startDate!,
+                            endDate: _isOngoing ? null : _endDate,
+                          ),
+                        );
                         showDialog(
                           context: context,
                           builder: (context) {
                             return AlertDialog(
                               title: const Text(
-                                  'Pengalaman berhasil ditambahkan!'),
+                                'Pengalaman berhasil ditambahkan!',
+                              ),
                               content: SingleChildScrollView(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Judul: $_title'),
                                     Text('Deskripsi: $_description'),
@@ -326,7 +327,8 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                                       'Thumbnail: ${_thumbnailUrl.trim().isEmpty ? "-" : _thumbnailUrl}',
                                     ),
                                     Text(
-                                        'Tanggal Mulai: ${_formatDate(_startDate!)}'),
+                                      'Tanggal Mulai: ${_formatDate(_startDate!)}',
+                                    ),
                                     Text(
                                       'Tanggal Selesai: ${_isOngoing ? "Sedang berlangsung" : _formatDate(_endDate!)}',
                                     ),

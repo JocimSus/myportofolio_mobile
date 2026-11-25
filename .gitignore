@@ -16,6 +16,7 @@ devenv.local.yaml
 build/
 coverage/
 .widget_preview/
+*.g.dart
 
 # Build artifacts
 *.apk

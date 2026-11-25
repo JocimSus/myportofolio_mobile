@@ -1,4 +1,4 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:portfolio_mobile/models/experience.dart';
 import 'package:portfolio_mobile/screens/experience_form.dart';
 import 'package:portfolio_mobile/widgets/left_drawer.dart';
@@ -10,11 +10,7 @@ class ExperienceListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Center(
-          child: Text(
-            'Experience List',
-          ),
-        ),
+        title: const Center(child: Text('Experience List')),
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
@@ -24,8 +20,11 @@ class ExperienceListPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.work_off_outlined,
-                      size: 64, color: Colors.grey),
+                  const Icon(
+                    Icons.work_off_outlined,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(height: 8),
                   const Text('Belum ada pengalaman yang ditambahkan.'),
                   TextButton(
@@ -73,8 +72,9 @@ class ExperienceListPage extends StatelessWidget {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .secondary,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Text(
